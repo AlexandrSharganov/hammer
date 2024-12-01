@@ -1,31 +1,21 @@
 import uuid
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import models, IntegrityError, transaction
+from django.db import models, IntegrityError
 from phonenumber_field.modelfields import PhoneNumberField
 
 
 class UserManager(BaseUserManager):
 
-    def generate_unique_invite_code(self):
-        while True:
-            invite_code = str(uuid.uuid4())[:6]
-            if not User.objects.filter(invite_code=invite_code).exists():
-                return invite_code
-
     def create_user(self, phone_number, password=None, **extra_fields):
-        while True:
-            invite_code = self.generate_unique_invite_code()
-            user = self.model(phone_number=phone_number, invite_code=invite_code, **extra_fields)
+            user = self.model(phone_number=phone_number, **extra_fields)
             if password:
                 user.set_password(password)
             try:
-                with transaction.atomic():
-                    user.save(using=self._db)
-                break
+                user.save(using=self._db)
             except IntegrityError:
-                continue
-        return user
+                raise IntegrityError("User with this phone number already exists")
+            return user
 
     def create_superuser(self, phone_number, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -42,8 +32,18 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
 
     phone_number = PhoneNumberField(unique=True)
-    invite_code = models.CharField(max_length=6, unique=True, blank=True)
-    activated_invite_code = models.CharField(max_length=6, null=True, blank=True)
+    invite_code = models.CharField(
+        max_length=6,
+        unique=True,
+        blank=True
+    )
+    activated_invite_code = models.ForeignKey(
+        'User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='referals'
+    )
 
     objects = UserManager()
 
