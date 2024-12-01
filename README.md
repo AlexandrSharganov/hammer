@@ -105,3 +105,20 @@
 
  - #### Документация Redoc доступна по адресу `/redoc/`
 
+ # Как развернуть локально
+
+ ## Без использования Docker
+
+ - Для Windows
+ 
+ Клонировать  репозиторий и выполнить команды
+
+ ```
+python -m venv venv
+
+. venv/Scripts/activate
+
+python -m pip install --upgrade pip
+
+pip install -r requirements.txt
+ ```

@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:13.1-alpine
+    restart: unless-stopped
+    volumes:
+        - postgres_data:/var/lib/postgresql/data
+    env_file:
+        - ./.env
+
+  web:
+    build:
+      context: .
+      dockerfile: /app/Dockerfile
+    container_name: web
+    command: bash -c "
+      python manage.py makemigrations --noinput &&
+      python manage.py migrate --noinput &&
+      python manage.py collectstatic --noinput &&
+      python manage.py supercreate &&
+      gunicorn app.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/static
+    env_file:
+      - .env
+    depends_on:
+      - db
+    expose:
+      - 8000  
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/static/
+      - media_volume:/media/
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
