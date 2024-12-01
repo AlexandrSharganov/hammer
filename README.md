@@ -1,5 +1,13 @@
 # Hammer System Test Task
 
+### Задеплоено на:
+ -  API : https://othersidecode.pythonanywhere.com/api/
+ - Админка : https://othersidecode.pythonanywhere.com/admin/
+ - > **Phone number:**  *+79999999999*
+ - > **Password:** *admin*
+ - Redoc : https://othersidecode.pythonanywhere.com/redoc/
+
+
 ### Общее описание функционала
 - Сервис позволяет регистрироваться и авторизовываться через подтверждающий код в смс.
 - После регистрации пользователью присваивается уникальный 6-значный номер.
