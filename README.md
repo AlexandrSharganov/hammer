@@ -7,7 +7,6 @@
  - > **Password:** *admin*
  - Redoc : https://othersidecode.pythonanywhere.com/redoc/
 
-
 ### Общее описание функционала
 - Сервис позволяет регистрироваться и авторизовываться через подтверждающий код в смс.
 - После регистрации пользователью присваивается уникальный 6-значный номер.
@@ -130,3 +129,38 @@ python -m pip install --upgrade pip
 
 pip install -r requirements.txt
  ```
+
+ > На основе example.env сделать свой файлик .env с переменными окружения
+
+- далее применяем миграции и запускаем
+```
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+```
+Переходим по ссылке http://127.0.0.1:8000/
+
+## С использованием Docker
+
+ - Для Windows Subsystem for Linux (WSL)
+
+Клонировать  репозиторий и выполнить команды
+
+Запустить Docker
+
+Из корня проекта выполнить:
+
+```
+docker compose up -d --build
+```
+>Контейнеры запускаются
+
+>Переходим по ссылке http://127.0.0.1/
+
+
+Для остановки используем
+```
+docker compose down -v
+```
+
+Не забываем что тут тоже нужен файлик .env на основе example.env
