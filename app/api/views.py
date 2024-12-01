@@ -1,18 +1,19 @@
 from django.core.cache import cache
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, status, viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from users.models import User
 
-from .serializers import AuthSerializer, OTPSerializer, UserSerializer, ReferalSerializer
+from .serializers import (AuthSerializer, OTPSerializer, ReferalSerializer,
+                          UserSerializer)
 from .utils import generate_otp_code
 
 
 class UserAuthViewSet(mixins.RetrieveModelMixin,
                       viewsets.GenericViewSet):
-    
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
@@ -27,7 +28,7 @@ class UserAuthViewSet(mixins.RetrieveModelMixin,
         if self.action == 'referal':
             return ReferalSerializer
         return super().get_serializer_class()
-    
+
     def get_permissions(self):
         if self.action in ('me', 'retrieve', 'referal'):
             return (IsAuthenticated(),)
@@ -51,7 +52,7 @@ class UserAuthViewSet(mixins.RetrieveModelMixin,
             serializer.validated_data['otp'] = otp
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @action(
         methods=['POST'],
         detail=False,
@@ -71,7 +72,7 @@ class UserAuthViewSet(mixins.RetrieveModelMixin,
                 serializer.validated_data['token'] = token
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({'detail': 'Your otp code is wrong!'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @action(["get"], detail=False, url_path='me')
     def me(self, request, *args, **kwargs):
         """Личная страница пользователя."""

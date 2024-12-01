@@ -5,6 +5,7 @@ from django.dispatch import receiver
 
 from .models import User
 
+
 @receiver(pre_save, sender=User)
 def generate_invite_code(sender, instance, **kwargs):
     if not instance.invite_code:

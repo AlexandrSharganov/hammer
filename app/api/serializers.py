@@ -1,6 +1,6 @@
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from phonenumber_field.serializerfields import PhoneNumberField
 from users.models import User
 
 
@@ -13,11 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('phone_number', 'invite_code', 'activated_invite_code', 'refs')
-    
+
     def get_refs(self, obj):
         refs = obj.referals.all()
-        return [str(ref.phone_number) for ref in refs] 
-    
+        return [str(ref.phone_number) for ref in refs]
+
     def get_activated_invite_code(self, obj):
         if obj.activated_invite_code:
             return obj.activated_invite_code.invite_code
@@ -52,16 +52,16 @@ class ReferalSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('phone_number', 'activated_invite_code', 'you_invited_by')
-        read_only_fields  = ('phone_number', )
+        read_only_fields = ('phone_number', )
 
     def get_you_invited_by(self, obj):
         if obj.activated_invite_code:
             return obj.activated_invite_code.__str__()
         return None
-    
+
     def update(self, instance, validated_data):
         activated_invite_code = validated_data.get('activated_invite_code', None)
-        
+
         if activated_invite_code:
             try:
                 user = User.objects.get(invite_code=activated_invite_code)
