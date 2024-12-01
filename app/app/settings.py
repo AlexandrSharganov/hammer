@@ -11,7 +11,6 @@ load_dotenv(BASE_DIR.parent.joinpath('.env'))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True
-# DEBUG = False
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
